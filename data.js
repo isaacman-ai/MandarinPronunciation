@@ -1,22 +1,4 @@
 const vocabularyData = [
-    // Lesson 6 (Image 1 - Left)
-    { hanzi: '你', pinyin: 'nǐ', category: 'Lesson 6' },
-    { hanzi: '鉛筆', pinyin: 'qiān bǐ', category: 'Lesson 6' },
-    { hanzi: '橙', pinyin: 'chéng', category: 'Lesson 6' }, // Capitalized in image, kept lowercase for consistency unless proper noun
-    { hanzi: '剪刀', pinyin: 'jiǎn dāo', category: 'Lesson 6' },
-    { hanzi: '橡皮', pinyin: 'xiàng pí', category: 'Lesson 6' },
-    { hanzi: '彩虹', pinyin: 'cǎi hóng', category: 'Lesson 6' },
-    { hanzi: '黃', pinyin: 'huáng', category: 'Lesson 6' },
-    { hanzi: '綠', pinyin: 'lǜ', category: 'Lesson 6' },
-    { hanzi: '紅', pinyin: 'hóng', category: 'Lesson 6' },
-
-    // Lesson 6 (Image 1 - Right)
-    { hanzi: '可樂', pinyin: 'kě lè', category: 'Lesson 6' },
-    { hanzi: '喝水', pinyin: 'hē shuǐ', category: 'Lesson 6' },
-    { hanzi: '謝謝', pinyin: 'xiè xie', category: 'Lesson 6' },
-    { hanzi: '大鼓', pinyin: 'dà gǔ', category: 'Lesson 6' },
-    { hanzi: '借給', pinyin: 'jiè gěi', category: 'Lesson 6' },
-
     // Lesson 1 (Image 2 - Left)
     { hanzi: '書包', pinyin: 'shū bāo', category: 'Lesson 1' },
     { hanzi: '司機', pinyin: 'sī jī', category: 'Lesson 1' },
@@ -48,5 +30,21 @@ const vocabularyData = [
     { hanzi: '音樂', pinyin: 'yīn yuè', category: 'Lesson 5' },
     { hanzi: '英文', pinyin: 'yīng wén', category: 'Lesson 5' },
     { hanzi: '體育', pinyin: 'tǐ yù', category: 'Lesson 5' },
-    { hanzi: '遊戲', pinyin: 'yóu xì', category: 'Lesson 5' }
+    { hanzi: '遊戲', pinyin: 'yóu xì', category: 'Lesson 5' },
+
+    // Lesson 6 (Image 1 - Left & Right)
+    { hanzi: '你', pinyin: 'nǐ', category: 'Lesson 6' },
+    { hanzi: '鉛筆', pinyin: 'qiān bǐ', category: 'Lesson 6' },
+    { hanzi: '橙', pinyin: 'chéng', category: 'Lesson 6' },
+    { hanzi: '剪刀', pinyin: 'jiǎn dāo', category: 'Lesson 6' },
+    { hanzi: '橡皮', pinyin: 'xiàng pí', category: 'Lesson 6' },
+    { hanzi: '彩虹', pinyin: 'cǎi hóng', category: 'Lesson 6' },
+    { hanzi: '黃', pinyin: 'huáng', category: 'Lesson 6' },
+    { hanzi: '綠', pinyin: 'lǜ', category: 'Lesson 6' },
+    { hanzi: '紅', pinyin: 'hóng', category: 'Lesson 6' },
+    { hanzi: '可樂', pinyin: 'kě lè', category: 'Lesson 6' },
+    { hanzi: '喝水', pinyin: 'hē shuǐ', category: 'Lesson 6' },
+    { hanzi: '謝謝', pinyin: 'xiè xie', category: 'Lesson 6' },
+    { hanzi: '大鼓', pinyin: 'dà gǔ', category: 'Lesson 6' },
+    { hanzi: '借給', pinyin: 'jiè gěi', category: 'Lesson 6' }
 ];
