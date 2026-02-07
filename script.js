@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!defaultFound) {
             const looseMandarin = chineseVoices.find(v => !v.lang.includes('HK') && !v.lang.includes('yue'));
             if (looseMandarin) {
-                voiceSelect.value = `${looseMandarin.name} (${looseMandarin.lang})`; // Select by text content is tricky, better to set index
                 // Actually select element helper
                 Array.from(voiceSelect.options).forEach(opt => {
                     if (opt.getAttribute('data-name') === looseMandarin.name) {
@@ -92,11 +91,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.8;
 
-        // Use selected voice
+        // Refresh voices list to ensure we have valid objects (fix for iOS)
+        // On iOS, the voice objects in the 'voices' array might become stale or garbage collected
+        const currentVoices = window.speechSynthesis.getVoices();
         const selectedOption = voiceSelect.selectedOptions[0];
+
         if (selectedOption) {
             const selectedName = selectedOption.getAttribute('data-name');
-            const selectedVoice = voices.find(voice => voice.name === selectedName);
+
+            // Try to match by name from the FRESH list
+            // If currentVoices is empty (rare but possible), fall back to our cached 'voices'
+            const voiceListToUse = currentVoices.length > 0 ? currentVoices : voices;
+            const selectedVoice = voiceListToUse.find(voice => voice.name === selectedName);
+
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
                 utterance.lang = selectedVoice.lang;
