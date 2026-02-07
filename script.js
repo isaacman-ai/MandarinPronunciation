@@ -1,11 +1,69 @@
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('vocabulary-grid');
+    const voiceSelect = document.getElementById('voice-select');
+    let voices = [];
 
-    // Sort logic implementation helper
-    // currently just rendering in order of array
+    // Populate voice list
+    function populateVoiceList() {
+        voices = window.speechSynthesis.getVoices();
 
-    let animationDelay = 0;
+        // Filter for Chinese voices only to keep the list clean
+        // Include zh-CN, zh-TW, zh-HK (so users can see if their device defaults to it)
+        const chineseVoices = voices.filter(voice =>
+            voice.lang.includes('zh') ||
+            voice.lang.includes('cmn') ||
+            voice.lang.includes('yue')
+        );
 
+        voiceSelect.innerHTML = '';
+
+        if (chineseVoices.length === 0) {
+            const option = document.createElement('option');
+            option.textContent = 'No Chinese voices found';
+            option.disabled = true;
+            voiceSelect.appendChild(option);
+            return;
+        }
+
+        let defaultFound = false;
+
+        chineseVoices.forEach(voice => {
+            const option = document.createElement('option');
+            option.textContent = `${voice.name} (${voice.lang})`;
+            option.setAttribute('data-lang', voice.lang);
+            option.setAttribute('data-name', voice.name);
+            voiceSelect.appendChild(option);
+
+            // Auto-select logic: Prioritize Mandarin (CN > TW)
+            if (!defaultFound) {
+                if (voice.lang === 'zh-CN' || voice.lang === 'zh-TW') {
+                    option.selected = true;
+                    defaultFound = true;
+                }
+            }
+        });
+
+        // If no strict Mandarin found, try loose match but avoid HK/Cantonese if possible
+        if (!defaultFound) {
+            const looseMandarin = chineseVoices.find(v => !v.lang.includes('HK') && !v.lang.includes('yue'));
+            if (looseMandarin) {
+                voiceSelect.value = `${looseMandarin.name} (${looseMandarin.lang})`; // Select by text content is tricky, better to set index
+                // Actually select element helper
+                Array.from(voiceSelect.options).forEach(opt => {
+                    if (opt.getAttribute('data-name') === looseMandarin.name) {
+                        opt.selected = true;
+                    }
+                });
+            }
+        }
+    }
+
+    populateVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    // Rendering Grid
     vocabularyData.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'card';
@@ -26,43 +84,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         grid.appendChild(card);
     });
+
+    function speak(text) {
+        // Cancel any current speech
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.8;
+
+        // Use selected voice
+        const selectedOption = voiceSelect.selectedOptions[0];
+        if (selectedOption) {
+            const selectedName = selectedOption.getAttribute('data-name');
+            const selectedVoice = voices.find(voice => voice.name === selectedName);
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+                utterance.lang = selectedVoice.lang;
+            }
+        }
+
+        window.speechSynthesis.speak(utterance);
+    }
 });
 
-function speak(text) {
-    // Cancel any current speech
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'zh-CN'; // Mandarin Chinese
-    utterance.rate = 0.8; // Slightly slower for learning
-
-    // Try to find a Mandarin voice
-    const voices = window.speechSynthesis.getVoices();
-
-    // Priority order for Mandarin voices
-    let chineseVoice = voices.find(voice => voice.lang === 'zh-CN'); // Exact match Mainland
-    if (!chineseVoice) chineseVoice = voices.find(voice => voice.lang === 'zh-TW'); // Exact match Taiwan
-    if (!chineseVoice) chineseVoice = voices.find(voice => voice.lang.includes('zh-CN')); // Includes match
-    if (!chineseVoice) chineseVoice = voices.find(voice => voice.lang.includes('zh-TW')); // Includes match
-
-    // If still no voice, try to find any Chinese voice that is NOT Hong Kong (Cantonese)
-    if (!chineseVoice) {
-        chineseVoice = voices.find(voice =>
-            voice.lang.includes('zh') &&
-            !voice.lang.includes('HK') &&
-            !voice.lang.includes('yue') // 'yue' is the code for Cantonese
-        );
-    }
-
-    if (chineseVoice) {
-        utterance.voice = chineseVoice;
-    }
-
-    // Explicitly set the lang again just in case
-    utterance.lang = 'zh-CN';
-
-    window.speechSynthesis.speak(utterance);
-}
 
 // Simple ripple effect visual feedback
 function createRipple(event, container) {
@@ -85,8 +129,3 @@ function createRipple(event, container) {
 
     container.appendChild(circle);
 }
-
-// Pre-load voices to ensure they are available when requested
-window.speechSynthesis.onvoiceschanged = () => {
-    window.speechSynthesis.getVoices();
-};

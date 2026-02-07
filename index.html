@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,21 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;700&family=Nunito:wght@400;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div class="app-container">
         <header>
             <h1>Mandarin Pronunciation</h1>
             <p>Click on a card to hear the pronunciation</p>
+            <div class="controls">
+                <select id="voice-select">
+                    <option value="" disabled selected>Loading voices...</option>
+                </select>
+            </div>
         </header>
 
         <main id="vocabulary-grid" class="grid-container">
@@ -28,4 +37,5 @@
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
