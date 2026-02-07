@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Populate voice list
     function populateVoiceList() {
+        if (typeof speechSynthesis === 'undefined') {
+            return;
+        }
+
         voices = window.speechSynthesis.getVoices();
 
         // Filter for Chinese voices only to keep the list clean
@@ -29,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         chineseVoices.forEach(voice => {
             const option = document.createElement('option');
+            // Display name format: "Name (Lang)" e.g. "Ting-Ting (zh-CN)"
             option.textContent = `${voice.name} (${voice.lang})`;
             option.setAttribute('data-lang', voice.lang);
             option.setAttribute('data-name', voice.name);
@@ -47,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!defaultFound) {
             const looseMandarin = chineseVoices.find(v => !v.lang.includes('HK') && !v.lang.includes('yue'));
             if (looseMandarin) {
-                // Actually select element helper
                 Array.from(voiceSelect.options).forEach(opt => {
                     if (opt.getAttribute('data-name') === looseMandarin.name) {
                         opt.selected = true;
@@ -92,21 +96,27 @@ document.addEventListener('DOMContentLoaded', () => {
         utterance.rate = 0.8;
 
         // Refresh voices list to ensure we have valid objects (fix for iOS)
-        // On iOS, the voice objects in the 'voices' array might become stale or garbage collected
         const currentVoices = window.speechSynthesis.getVoices();
         const selectedOption = voiceSelect.selectedOptions[0];
 
         if (selectedOption) {
             const selectedName = selectedOption.getAttribute('data-name');
+            const selectedLang = selectedOption.getAttribute('data-lang');
 
             // Try to match by name from the FRESH list
-            // If currentVoices is empty (rare but possible), fall back to our cached 'voices'
             const voiceListToUse = currentVoices.length > 0 ? currentVoices : voices;
             const selectedVoice = voiceListToUse.find(voice => voice.name === selectedName);
 
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
+                // CRITICAL FOR IOS: The utterance lang MUST match the voice lang
                 utterance.lang = selectedVoice.lang;
+            } else {
+                // Fallback: if voice object is missing, at least set the lang
+                // This might force iOS to pick a different voice with the same lang
+                if (selectedLang) {
+                    utterance.lang = selectedLang;
+                }
             }
         }
 
