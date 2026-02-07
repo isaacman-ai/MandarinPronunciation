@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('vocabulary-grid');
     const voiceSelect = document.getElementById('voice-select');
+    const debugEl = document.getElementById('debug-info');
+
+    // Initial debug message to confirm script version
+    if (debugEl) debugEl.textContent = 'v2.1 Ready. Waiting for interaction...';
+
     let voices = [];
 
     // Populate voice list
@@ -109,13 +114,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
-                // CRITICAL FOR IOS: The utterance lang MUST match the voice lang
                 utterance.lang = selectedVoice.lang;
+                if (debugEl) debugEl.textContent = `Playing: ${selectedVoice.name} | Lang: ${selectedVoice.lang}`;
             } else {
                 // Fallback: if voice object is missing, at least set the lang
                 // This might force iOS to pick a different voice with the same lang
                 if (selectedLang) {
                     utterance.lang = selectedLang;
+                    if (debugEl) debugEl.textContent = `Fallback: Force Lang ${selectedLang} (Object lost)`;
                 }
             }
         }
